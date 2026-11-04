@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GenogramaPDC</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7f9;
+    color: #263238;
+  }
+  header {
+    background: #fff;
+    padding: 16px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  h1 { font-size: 20px; margin: 0; }
+  button {
+    border: 0;
+    border-radius: 7px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: #167d75;
+    color: white;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 330px 1fr;
+    min-height: 80vh;
+  }
+  aside {
+    background: white;
+    padding: 16px;
+    border-right: 1px solid #ddd;
+  }
+  details {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 0;
+  }
+  summary { cursor: pointer; font-weight: bold; }
+  label { display: block; margin-top: 12px; font-size: 13px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 9px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+  }
+  textarea { min-height: 75px; }
+  .field { margin-bottom: 10px; }
+  .secondary { background: #e8efef; color: #263238; }
+  .person {
+    padding: 9px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .person label { display: inline; margin: 0; }
+  .person input { width: auto; }
+  .workspace { padding: 22px; overflow: auto; }
+  .paper {
+    background: white;
+    max-width: 950px;
+    margin: auto;
+    padding: 24px;
+    min-height: 500px;
+    border: 1px solid #ddd;
+  }
+  .diagram { display: flex; flex-wrap: wrap; gap: 15px; }
+  .group {
+    border: 2px dashed #718096;
+    border-radius: 35px;
+    padding: 20px;
+    margin: 15px 0;
+  }
+  .house { border-color: #168c83; }
+  .members { display: flex; flex-wrap: wrap; gap: 20px; }
+  .member { text-align: center; width: 90px; }
+  .symbol {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #263238;
+    margin: 8px auto;
+    display: grid;
+    place-items: center;
+  }
+  .female { border-radius: 50%; }
+  .male { border-radius: 0; }
+  .other { border-radius: 12px; }
+  .small { color: #64748b; font-size: 13px; }
+  @media (max-width: 700px) {
+    main { display: block; }
+    aside { border-right: 0; }
+    .workspace { padding: 10px; }
+    .paper { padding: 15px; }
+  }
+  @media print {
+    header, aside { display: none; }
+    main { display: block; }
+    .workspace { padding: 0; }
+    .paper { border: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>GenogramaPDC</h1>
+  <button onclick="guardar()">Guardar</button>
+</header>
+
+<main>
+<aside>
+  <label>Título del genograma</label>
+  <input id="titulo" value="Genograma familiar" oninput="actualizar()">
+
+  <label>Nombre del usuario</label>
+  <input id="usuario" placeholder="Nombre del usuario" oninput="actualizar()">
+
+  <details open>
+    <summary>Familia</summary>
+    <label>Nombre de la persona</label>
+    <input id="nombrePersona" placeholder="Ej. Javiera">
+    <label>Sexo (símbolo)</label>
+    <select id="sexoPersona">
+      <option value="F">Círculo</option>
+      <option value="M">Cuadrado</option>
+      <option value="O">Otro</option>
+    </select>
+    <button style="margin-top:10px" onclick="agregarPersona()">+ Agregar</button>
+    <div id="listaPersonas"></div>
+  </details>
+
+  <details>
+    <summary>Parentescos</summary>
+    <label>Persona A</label>
+    <select id="personaA"></select>
+    <label>Relación</label>
+    <select id="parentesco">
+      <option>Madre de</option>
+      <option>Padre de</option>
+      <option>Hijo/a de</option>
+      <option>Hermano/a de</option>
+      <option>Abuelo/a de</option>
+      <option>Tío/a de</option>
+      <option>Pareja de</option>
+      <option>Otro</option>
+    </select>
+    <label>Persona B</label>
+    <select id="personaB"></select>
+    <button style="margin-top:10px" onclick="agregarParentesco()">+ Agregar</button>
+    <div id="listaParentescos"></div>
+  </details>
+
+  <details>
+    <summary>Vivienda</summary>
+    <p class="small">Selecciona quiénes viven en la misma casa o en otra vivienda del terreno.</p>
+    <div id="listaVivienda"></div>
+  </details>
+
+  <details>
+    <summary>Notas</summary>
+    <textarea id="notas" placeholder="Ej. Padre reside en otra región..." oninput="actualizar()"></textarea>
+  </details>
+</aside>
+
+<section class="workspace">
+  <div class="paper" id="documento">
+    <h2 id="tituloVista">Genograma familiar</h2>
+    <p id="usuarioVista"></p>
+    <div id="dibujo"></div>
+    <h3>Registro familiar</h3>
+    <div id="registro"></div>
+    <h3>Notas</h3>
+    <p id="notasVista"></p>
+  </div>
+</section>
+</main>
+
+<script>
+const personas = [];
+const parentescos = [];
+
+function limpiar(texto) {
+  return String(texto).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  }[c]));
+}
+
+function agregarPersona() {
+  const input = document.getElementById("nombrePersona");
+  const nombre = input.value.trim();
+  if (!nombre) return alert("Escribe un nombre.");
+  personas.push({
+    id: Date.now() + Math.random(),
+    nombre,
+    sexo: document.getElementById("sexoPersona").value,
+    vivienda: "fuera"
+  });
+  input.value = "";
+  actualizar();
+}
+
+function agregarParentesco() {
+  const a = document.getElementById("personaA").value;
+  const b = document.getElementById("personaB").value;
+  if (!a || !b || a === b)
+    return alert("Selecciona dos personas distintas.");
+  parentescos.push({
+    a, b,
+    tipo: document.getElementById("parentesco").value
+  });
+  actualizar();
+}
+
+function personaPorId(id) {
+  return personas.find(p => String(p.id) === String(id));
+}
+
+function simbolo(p) {
+  const clase = p.sexo === "F" ? "female" :
+                p.sexo === "M" ? "male" : "other";
+  return `<div class="member">
+    <div class="symbol ${clase}"></div>
+    <div>${limpiar(p.nombre)}</div>
+  </div>`;
+}
+
+function actualizar() {
+  const titulo = document.getElementById("titulo").value;
+  const usuario = document.getElementById("usuario").value;
+  document.getElementById("tituloVista").textContent = titulo;
+  document.getElementById("usuarioVista").textContent =
+    usuario ? "Usuario: " + usuario : "";
+  document.getElementById("notasVista").textContent =
+    document.getElementById("notas").value;
+
+  const opciones = personas.map(p =>
+    `<option value="${p.id}">${limpiar(p.nombre)}</option>`
+  ).join("");
+
+  ["personaA", "personaB"].forEach(id => {
+    const elemento = document.getElementById(id);
+    const anterior = elemento.value;
+    elemento.innerHTML = opciones;
+    if (personas.some(p => String(p.id) === anterior))
+      elemento.value = anterior;
+  });
+
+  document.getElementById("listaPersonas").innerHTML =
+    personas.map(p => `<div class="person">
+      ${limpiar(p.nombre)}
+    </div>`).join("");
+
+  document.getElementById("listaVivienda").innerHTML =
+    personas.map(p => `<div class="person">
+      <strong>${limpiar(p.nombre)}</strong>
+      <select onchange="cambiarVivienda('${p.id}',this.value)">
+        <option value="fuera" ${p.vivienda==="fuera"?"selected":""}>Fuera del terreno</option>
+        <option value="casa" ${p.vivienda==="casa"?"selected":""}>Misma casa</option>
+        <option value="terreno" ${p.vivienda==="terreno"?"selected":""}>Mismo terreno, otra casa</option>
+      </select>
+    </div>`).join("");
+
+  const casa = personas.filter(p => p.vivienda === "casa");
+  const terreno = personas.filter(p => p.vivienda === "terreno");
+  const fuera = personas.filter(p => p.vivienda === "fuera");
+
+  let dibujo = `<div class="group">
+    <strong>Terreno</strong>
+    <div class="group house">
+      <strong>Casa</strong>
+      <div class="members">${casa.map(simbolo).join("")}</div>
+    </div>
+    <div class="members">${terreno.map(simbolo).join("")}</div>
+  </div>`;
+
+  if (fuera.length)
+    dibujo += `<h4>Otros familiares</h4>
+      <div class="members">${fuera.map(simbolo).join("")}</div>`;
+
+  document.getElementById("dibujo").innerHTML = dibujo;
+
+  document.getElementById("listaParentescos").innerHTML =
+    parentescos.map(r => {
+      const a = personaPorId(r.a);
+      const b = personaPorId(r.b);
+      return `<div class="person">${limpiar(a?.nombre || "?")}
+        — ${limpiar(r.tipo)} —
+        ${limpiar(b?.nombre || "?")}</div>`;
+    }).join("");
+
+  const lista = [
+    "<strong>Personas:</strong>",
+    ...personas.map(p => `${limpiar(p.nombre)} — ${
+      p.vivienda==="casa" ? "Misma casa" :
+      p.vivienda==="terreno" ? "Mismo terreno" : "Fuera del terreno"
+    }`),
+    "<br><strong>Parentescos:</strong>",
+    ...parentescos.map(r => {
+      const a = personaPorId(r.a);
+      const b = personaPorId(r.b);
+      return `${limpiar(a?.nombre || "?")} — ${limpiar(r.tipo)} — ${limpiar(b?.nombre || "?")}`;
+    })
+  ];
+  document.getElementById("registro").innerHTML =
+    lista.join("<br>");
+}
+
+function cambiarVivienda(id, vivienda) {
+  const persona = personaPorId(id);
+  if (persona) persona.vivienda = vivienda;
+  actualizar();
+}
+
+function agregarTexto() {}
+
+function guardar() {
+  window.print();
+}
+
+actualizar();
+</script>
+</body>
+</html>
+
