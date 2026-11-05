@@ -1,333 +1,71 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GenogramaPDC</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f5f7f9;
-    color: #263238;
-  }
-  header {
-    background: #fff;
-    padding: 16px 20px;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  h1 { font-size: 20px; margin: 0; }
-  button {
-    border: 0;
-    border-radius: 7px;
-    padding: 10px 14px;
-    cursor: pointer;
-    background: #167d75;
-    color: white;
-  }
-  main {
-    display: grid;
-    grid-template-columns: 330px 1fr;
-    min-height: 80vh;
-  }
-  aside {
-    background: white;
-    padding: 16px;
-    border-right: 1px solid #ddd;
-  }
-  details {
-    border-bottom: 1px solid #ddd;
-    padding: 12px 0;
-  }
-  summary { cursor: pointer; font-weight: bold; }
-  label { display: block; margin-top: 12px; font-size: 13px; }
-  input, select, textarea {
-    width: 100%;
-    padding: 9px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font: inherit;
-  }
-  textarea { min-height: 75px; }
-  .field { margin-bottom: 10px; }
-  .secondary { background: #e8efef; color: #263238; }
-  .person {
-    padding: 9px 0;
-    border-bottom: 1px solid #eee;
-  }
-  .person label { display: inline; margin: 0; }
-  .person input { width: auto; }
-  .workspace { padding: 22px; overflow: auto; }
-  .paper {
-    background: white;
-    max-width: 950px;
-    margin: auto;
-    padding: 24px;
-    min-height: 500px;
-    border: 1px solid #ddd;
-  }
-  .diagram { display: flex; flex-wrap: wrap; gap: 15px; }
-  .group {
-    border: 2px dashed #718096;
-    border-radius: 35px;
-    padding: 20px;
-    margin: 15px 0;
-  }
-  .house { border-color: #168c83; }
-  .members { display: flex; flex-wrap: wrap; gap: 20px; }
-  .member { text-align: center; width: 90px; }
-  .symbol {
-    width: 42px;
-    height: 42px;
-    border: 2px solid #263238;
-    margin: 8px auto;
-    display: grid;
-    place-items: center;
-  }
-  .female { border-radius: 50%; }
-  .male { border-radius: 0; }
-  .other { border-radius: 12px; }
-  .small { color: #64748b; font-size: 13px; }
-  @media (max-width: 700px) {
-    main { display: block; }
-    aside { border-right: 0; }
-    .workspace { padding: 10px; }
-    .paper { padding: 15px; }
-  }
-  @media print {
-    header, aside { display: none; }
-    main { display: block; }
-    .workspace { padding: 0; }
-    .paper { border: 0; max-width: none; }
-  }
+:root{font-family:Arial,sans-serif;color:#263044;background:#f4f6f8}*{box-sizing:border-box}body{margin:0}header{display:flex;align-items:center;justify-content:space-between;background:white;border-bottom:1px solid #ddd;padding:14px 20px;gap:12px}h1{font-size:20px;margin:0}h2{font-size:21px}button{background:#177d75;color:white;border:0;border-radius:7px;padding:10px 13px;cursor:pointer}button:disabled{opacity:.5}.subtle{background:#e8eeef;color:#263044}.danger{color:#a92f35}.layout{display:grid;grid-template-columns:minmax(285px,345px) minmax(0,1fr);min-height:calc(100vh - 65px)}aside{background:white;padding:16px;border-right:1px solid #ddd}main{padding:22px;min-width:0}.paper{background:white;border:1px solid #ddd;max-width:1000px;margin:auto;padding:25px;min-height:450px}details{border-bottom:1px solid #e5e7eb;padding:13px 0}summary{font-weight:bold;cursor:pointer}label{display:block;font-size:13px;margin-top:12px}input,select,textarea{width:100%;padding:9px;margin-top:5px;border:1px solid #c9d0d8;border-radius:6px;font:inherit}textarea{min-height:80px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.item{padding:10px 0;border-bottom:1px solid #eee;font-size:14px}.item button{padding:5px 8px;margin:4px 4px 0 0}.small{font-size:12px;color:#667085}.status{font-size:12px;color:#38665b}.group{border:2px dashed #74839b;border-radius:32px;padding:16px;margin:16px 0}.house{border-color:#0f8b82}.members{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0}.person{width:100px;text-align:center;overflow-wrap:anywhere}.symbol{height:52px;width:52px;border:2px solid #263044;margin:0 auto 7px;display:grid;place-items:center;font-weight:bold;font-size:13px}.F{border-radius:50%;background:#f4c4df}.M{background:#a9cfe8}.O{border-radius:13px;background:#eee}.identified{outline:2px solid #263044;outline-offset:4px}.dead{position:relative}.dead:before,.dead:after{content:"";position:absolute;left:-5px;top:24px;width:60px;border-top:2px solid #263044;transform:rotate(45deg)}.dead:after{transform:rotate(-45deg)}.muted{color:#64748b}.record{line-height:1.7;overflow-wrap:anywhere}.record h3{margin-bottom:4px}.record ul{margin-top:4px;padding-left:20px}.hidden{display:none!important}@media(max-width:760px){.layout{display:block}aside{border-right:0}main{padding:10px}.paper{padding:15px}header{flex-wrap:wrap}}@media print{header,aside{display:none!important}.layout{display:block}main{padding:0}.paper{border:0;max-width:none;padding:0}.group,.person{break-inside:avoid}body{background:white}}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>GenogramaPDC</h1>
-  <button onclick="guardar()">Guardar</button>
-</header>
-
-<main>
-<aside>
-  <label>Título del genograma</label>
-  <input id="titulo" value="Genograma familiar" oninput="actualizar()">
-
-  <label>Nombre del usuario</label>
-  <input id="usuario" placeholder="Nombre del usuario" oninput="actualizar()">
-
-  <details open>
-    <summary>Familia</summary>
-    <label>Nombre de la persona</label>
-    <input id="nombrePersona" placeholder="Ej. Javiera">
-    <label>Sexo (símbolo)</label>
-    <select id="sexoPersona">
-      <option value="F">Círculo</option>
-      <option value="M">Cuadrado</option>
-      <option value="O">Otro</option>
-    </select>
-    <button style="margin-top:10px" onclick="agregarPersona()">+ Agregar</button>
-    <div id="listaPersonas"></div>
-  </details>
-
-  <details>
-    <summary>Parentescos</summary>
-    <label>Persona A</label>
-    <select id="personaA"></select>
-    <label>Relación</label>
-    <select id="parentesco">
-      <option>Madre de</option>
-      <option>Padre de</option>
-      <option>Hijo/a de</option>
-      <option>Hermano/a de</option>
-      <option>Abuelo/a de</option>
-      <option>Tío/a de</option>
-      <option>Pareja de</option>
-      <option>Otro</option>
-    </select>
-    <label>Persona B</label>
-    <select id="personaB"></select>
-    <button style="margin-top:10px" onclick="agregarParentesco()">+ Agregar</button>
-    <div id="listaParentescos"></div>
-  </details>
-
-  <details>
-    <summary>Vivienda</summary>
-    <p class="small">Selecciona quiénes viven en la misma casa o en otra vivienda del terreno.</p>
-    <div id="listaVivienda"></div>
-  </details>
-
-  <details>
-    <summary>Notas</summary>
-    <textarea id="notas" placeholder="Ej. Padre reside en otra región..." oninput="actualizar()"></textarea>
-  </details>
-</aside>
-
-<section class="workspace">
-  <div class="paper" id="documento">
-    <h2 id="tituloVista">Genograma familiar</h2>
-    <p id="usuarioVista"></p>
-    <div id="dibujo"></div>
-    <h3>Registro familiar</h3>
-    <div id="registro"></div>
-    <h3>Notas</h3>
-    <p id="notasVista"></p>
-  </div>
-</section>
-</main>
-
+<header><h1>GenogramaPDC</h1><div class="actions" style="margin:0"><span id="estado" class="status" aria-live="polite"></span><button class="subtle" id="toggle" type="button">Ocultar dibujo</button><button id="guardar" type="button">Guardar</button></div></header>
+<div class="layout"><aside>
+<label for="titulo">Título del genograma</label><input id="titulo" placeholder="Genograma familiar">
+<label for="usuario">Nombre del usuario</label><input id="usuario" placeholder="Nombre o identificador">
+<label for="fecha">Fecha</label><input id="fecha" type="date">
+<details open><summary>Familia</summary>
+<input type="hidden" id="editando"><label for="nombre">Nombre</label><input id="nombre" placeholder="Ej. Javiera">
+<label for="edad">Edad (opcional)</label><input id="edad" placeholder="Ej. 13" inputmode="numeric">
+<label for="sexo">Símbolo</label><select id="sexo"><option value="F">Círculo</option><option value="M">Cuadrado</option><option value="O">Otro</option></select>
+<label><input type="checkbox" id="fallecido" style="width:auto"> Fallecido/a</label>
+<label for="notaPersona">Nota de la persona (opcional)</label><input id="notaPersona" placeholder="Ej. Vive en otra región">
+<div class="actions"><button id="agregarPersona">+ Agregar persona</button><button class="subtle hidden" id="cancelarEdicion">Cancelar edición</button></div><div id="personasLista"></div>
+</details>
+<details><summary>Parentescos</summary><label for="personaA">Persona A</label><select id="personaA"></select><label for="parentesco">Relación</label><select id="parentesco"><option>Madre de</option><option>Padre de</option><option>Hijo/a de</option><option>Hermano/a de</option><option>Abuelo/a de</option><option>Tío/a de</option><option>Pareja de</option><option>Expareja de</option><option>Cuidador/a de</option><option>Otro</option></select><label for="personaB">Persona B</label><select id="personaB"></select><label for="otroParentesco">Si elegiste «Otro», escribe cuál</label><input id="otroParentesco" placeholder="Relación personalizada"><div class="actions"><button id="agregarParentesco">+ Agregar relación</button></div><div id="parentescosLista"></div></details>
+<details><summary>Vivienda</summary><p class="small">Asigna a cada persona a la casa, a otra vivienda del mismo terreno o fuera del terreno.</p><div id="viviendaLista"></div></details>
+<details><summary>Notas</summary><label for="notas">Observaciones libres</label><textarea id="notas" placeholder="Escribe aquí lo que necesites registrar..."></textarea></details>
+<div class="actions"><button class="subtle" id="nuevo">Nuevo genograma</button></div>
+<p class="small">Esta versión guarda automáticamente los cambios en este navegador. Para conservar una copia fuera de él, usa «Guardar» y selecciona PDF.</p>
+</aside><main id="panelDibujo"><article class="paper" id="documento"><h2 id="vistaTitulo"></h2><p id="vistaUsuario"></p><div id="dibujo"></div><div class="record" id="registro"></div></article></main></div>
 <script>
-const personas = [];
-const parentescos = [];
-
-function limpiar(texto) {
-  return String(texto).replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
-  }[c]));
+'use strict';
+const CLAVE='genogramaPDC_v2';
+const $=id=>document.getElementById(id);
+const nuevoEstado=()=>({titulo:'Genograma familiar',usuario:'',fecha:new Date().toISOString().slice(0,10),personas:[],parentescos:[],notas:''});
+let datos=nuevoEstado();
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const idNuevo=()=>globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random();
+const buscar=id=>datos.personas.find(p=>p.id===id);
+function persistir(){try{localStorage.setItem(CLAVE,JSON.stringify(datos));$('estado').textContent='Guardado local ✓';return true}catch(e){$('estado').textContent='No se pudo guardar';alert('No se pudo guardar en este navegador. Descarga el PDF antes de salir.');return false}}
+function cargar(){try{const s=localStorage.getItem(CLAVE);if(s){const d=JSON.parse(s);if(Array.isArray(d.personas)&&Array.isArray(d.parentescos))datos={...nuevoEstado(),...d}}}catch(e){alert('No se pudo leer el guardado local anterior. No borres los datos del navegador.')}$('titulo').value=datos.titulo;$('usuario').value=datos.usuario;$('fecha').value=datos.fecha;$('notas').value=datos.notas;dibujar()}
+function modificar(){datos.titulo=$('titulo').value;datos.usuario=$('usuario').value;datos.fecha=$('fecha').value;datos.notas=$('notas').value;persistir();dibujar()}
+['titulo','usuario','fecha','notas'].forEach(id=>$(id).addEventListener('input',modificar));
+function limpiarFormulario(){$('editando').value='';$('nombre').value='';$('edad').value='';$('sexo').value='F';$('fallecido').checked=false;$('notaPersona').value='';$('agregarPersona').textContent='+ Agregar persona';$('cancelarEdicion').classList.add('hidden')}
+$('agregarPersona').onclick=()=>{const nombre=$('nombre').value.trim();if(!nombre)return alert('Escribe el nombre.');const id=$('editando').value;const anterior=id?buscar(id):null;const p={id:anterior?.id||idNuevo(),nombre,edad:$('edad').value.trim(),sexo:$('sexo').value,fallecido:$('fallecido').checked,nota:$('notaPersona').value.trim(),vivienda:anterior?.vivienda||'fuera'};if(anterior)Object.assign(anterior,p);else datos.personas.push(p);persistir();limpiarFormulario();dibujar()};
+$('cancelarEdicion').onclick=limpiarFormulario;
+function editarPersona(id){const p=buscar(id);if(!p)return;$('editando').value=p.id;$('nombre').value=p.nombre;$('edad').value=p.edad;$('sexo').value=p.sexo;$('fallecido').checked=p.fallecido;$('notaPersona').value=p.nota;$('agregarPersona').textContent='Guardar cambios';$('cancelarEdicion').classList.remove('hidden')}
+function eliminarPersona(id){const p=buscar(id);if(!p||!confirm('¿Eliminar a '+p.nombre+' y todos sus parentescos registrados?'))return;datos.personas=datos.personas.filter(x=>x.id!==id);datos.parentescos=datos.parentescos.filter(r=>r.a!==id&&r.b!==id);persistir();limpiarFormulario();dibujar()}
+$('agregarParentesco').onclick=()=>{const a=$('personaA').value,b=$('personaB').value;if(!a||!b||a===b)return alert('Selecciona dos personas distintas.');let tipo=$('parentesco').value;if(tipo==='Otro')tipo=$('otroParentesco').value.trim();if(!tipo)return alert('Escribe la relación.');datos.parentescos.push({id:idNuevo(),a,b,tipo});persistir();dibujar()};
+function eliminarParentesco(id){datos.parentescos=datos.parentescos.filter(r=>r.id!==id);persistir();dibujar()}
+function cambiarVivienda(id,v){const p=buscar(id);if(!p)return;p.vivienda=v;persistir();dibujar()}
+function personaHtml(p){return `<div class="person"><div class="symbol ${esc(p.sexo)} ${p.id===datos.personas.find(x=>x.nombre.trim().toLowerCase()===datos.usuario.trim().toLowerCase()&&datos.usuario.trim())?.id?'identified':''} ${p.fallecido?'dead':''}">${esc(p.edad)}</div><strong>${esc(p.nombre)}</strong>${p.nota?`<div class="small">${esc(p.nota)}</div>`:''}</div>`}
+function opciones(id,anterior){const el=$(id);el.innerHTML='<option value="">Seleccionar...</option>'+datos.personas.map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('');if(datos.personas.some(p=>p.id===anterior))el.value=anterior}
+function dibujar(){const a=$('personaA').value,b=$('personaB').value;opciones('personaA',a);opciones('personaB',b);
+$('personasLista').innerHTML=datos.personas.map(p=>`<div class="item"><strong>${esc(p.nombre)}</strong> ${p.edad?'('+esc(p.edad)+')':''}<div><button class="subtle" data-edit="${esc(p.id)}">Editar</button><button class="subtle danger" data-delete="${esc(p.id)}">Eliminar</button></div></div>`).join('');
+$('parentescosLista').innerHTML=datos.parentescos.map(r=>`<div class="item">${esc(buscar(r.a)?.nombre||'?')} — ${esc(r.tipo)} — ${esc(buscar(r.b)?.nombre||'?')} <button class="subtle danger" data-delrel="${esc(r.id)}">Quitar</button></div>`).join('');
+$('viviendaLista').innerHTML=datos.personas.map(p=>`<div class="item"><strong>${esc(p.nombre)}</strong><select data-home="${esc(p.id)}"><option value="fuera" ${p.vivienda==='fuera'?'selected':''}>Fuera del terreno</option><option value="casa" ${p.vivienda==='casa'?'selected':''}>Misma casa</option><option value="terreno" ${p.vivienda==='terreno'?'selected':''}>Mismo terreno, otra vivienda</option></select></div>`).join('');
+$('vistaTitulo').textContent=datos.titulo||'Genograma familiar';$('vistaUsuario').textContent=[datos.usuario?'Usuario: '+datos.usuario:'',datos.fecha?'Fecha: '+datos.fecha:''].filter(Boolean).join(' · ');
+const casa=datos.personas.filter(p=>p.vivienda==='casa'),terreno=datos.personas.filter(p=>p.vivienda==='terreno'),fuera=datos.personas.filter(p=>p.vivienda==='fuera');
+$('dibujo').innerHTML=`<div class="group"><strong>Terreno</strong><div class="group house"><strong>Casa</strong><div class="members">${casa.map(personaHtml).join('')||'<span class="small">Sin integrantes asignados</span>'}</div></div>${terreno.length?'<strong>Otras viviendas del terreno</strong><div class="members">'+terreno.map(personaHtml).join('')+'</div>':''}</div>${fuera.length?'<h3>Otros familiares</h3><div class="members">'+fuera.map(personaHtml).join('')+'</div>':''}`;
+const li=arr=>arr.length?'<ul>'+arr.map(t=>'<li>'+t+'</li>').join('')+'</ul>':'<p class="small">Sin registros.</p>';
+$('registro').innerHTML='<h3>Listado de personas y convivencia</h3>'+li(datos.personas.map(p=>`${esc(p.nombre)}${p.edad?' ('+esc(p.edad)+' años)':''}${p.fallecido?' — Fallecido/a':''} — ${p.vivienda==='casa'?'Misma casa':p.vivienda==='terreno'?'Otra vivienda del mismo terreno':'Fuera del terreno'}${p.nota?' — '+esc(p.nota):''}`))+'<h3>Parentescos</h3>'+li(datos.parentescos.map(r=>`${esc(buscar(r.a)?.nombre||'?')} — ${esc(r.tipo)} — ${esc(buscar(r.b)?.nombre||'?')}`))+'<h3>Notas</h3><p style="white-space:pre-wrap">'+esc(datos.notas||'Sin observaciones.')+'</p>';
 }
-
-function agregarPersona() {
-  const input = document.getElementById("nombrePersona");
-  const nombre = input.value.trim();
-  if (!nombre) return alert("Escribe un nombre.");
-  personas.push({
-    id: Date.now() + Math.random(),
-    nombre,
-    sexo: document.getElementById("sexoPersona").value,
-    vivienda: "fuera"
-  });
-  input.value = "";
-  actualizar();
-}
-
-function agregarParentesco() {
-  const a = document.getElementById("personaA").value;
-  const b = document.getElementById("personaB").value;
-  if (!a || !b || a === b)
-    return alert("Selecciona dos personas distintas.");
-  parentescos.push({
-    a, b,
-    tipo: document.getElementById("parentesco").value
-  });
-  actualizar();
-}
-
-function personaPorId(id) {
-  return personas.find(p => String(p.id) === String(id));
-}
-
-function simbolo(p) {
-  const clase = p.sexo === "F" ? "female" :
-                p.sexo === "M" ? "male" : "other";
-  return `<div class="member">
-    <div class="symbol ${clase}"></div>
-    <div>${limpiar(p.nombre)}</div>
-  </div>`;
-}
-
-function actualizar() {
-  const titulo = document.getElementById("titulo").value;
-  const usuario = document.getElementById("usuario").value;
-  document.getElementById("tituloVista").textContent = titulo;
-  document.getElementById("usuarioVista").textContent =
-    usuario ? "Usuario: " + usuario : "";
-  document.getElementById("notasVista").textContent =
-    document.getElementById("notas").value;
-
-  const opciones = personas.map(p =>
-    `<option value="${p.id}">${limpiar(p.nombre)}</option>`
-  ).join("");
-
-  ["personaA", "personaB"].forEach(id => {
-    const elemento = document.getElementById(id);
-    const anterior = elemento.value;
-    elemento.innerHTML = opciones;
-    if (personas.some(p => String(p.id) === anterior))
-      elemento.value = anterior;
-  });
-
-  document.getElementById("listaPersonas").innerHTML =
-    personas.map(p => `<div class="person">
-      ${limpiar(p.nombre)}
-    </div>`).join("");
-
-  document.getElementById("listaVivienda").innerHTML =
-    personas.map(p => `<div class="person">
-      <strong>${limpiar(p.nombre)}</strong>
-      <select onchange="cambiarVivienda('${p.id}',this.value)">
-        <option value="fuera" ${p.vivienda==="fuera"?"selected":""}>Fuera del terreno</option>
-        <option value="casa" ${p.vivienda==="casa"?"selected":""}>Misma casa</option>
-        <option value="terreno" ${p.vivienda==="terreno"?"selected":""}>Mismo terreno, otra casa</option>
-      </select>
-    </div>`).join("");
-
-  const casa = personas.filter(p => p.vivienda === "casa");
-  const terreno = personas.filter(p => p.vivienda === "terreno");
-  const fuera = personas.filter(p => p.vivienda === "fuera");
-
-  let dibujo = `<div class="group">
-    <strong>Terreno</strong>
-    <div class="group house">
-      <strong>Casa</strong>
-      <div class="members">${casa.map(simbolo).join("")}</div>
-    </div>
-    <div class="members">${terreno.map(simbolo).join("")}</div>
-  </div>`;
-
-  if (fuera.length)
-    dibujo += `<h4>Otros familiares</h4>
-      <div class="members">${fuera.map(simbolo).join("")}</div>`;
-
-  document.getElementById("dibujo").innerHTML = dibujo;
-
-  document.getElementById("listaParentescos").innerHTML =
-    parentescos.map(r => {
-      const a = personaPorId(r.a);
-      const b = personaPorId(r.b);
-      return `<div class="person">${limpiar(a?.nombre || "?")}
-        — ${limpiar(r.tipo)} —
-        ${limpiar(b?.nombre || "?")}</div>`;
-    }).join("");
-
-  const lista = [
-    "<strong>Personas:</strong>",
-    ...personas.map(p => `${limpiar(p.nombre)} — ${
-      p.vivienda==="casa" ? "Misma casa" :
-      p.vivienda==="terreno" ? "Mismo terreno" : "Fuera del terreno"
-    }`),
-    "<br><strong>Parentescos:</strong>",
-    ...parentescos.map(r => {
-      const a = personaPorId(r.a);
-      const b = personaPorId(r.b);
-      return `${limpiar(a?.nombre || "?")} — ${limpiar(r.tipo)} — ${limpiar(b?.nombre || "?")}`;
-    })
-  ];
-  document.getElementById("registro").innerHTML =
-    lista.join("<br>");
-}
-
-function cambiarVivienda(id, vivienda) {
-  const persona = personaPorId(id);
-  if (persona) persona.vivienda = vivienda;
-  actualizar();
-}
-
-function agregarTexto() {}
-
-function guardar() {
-  window.print();
-}
-
-actualizar();
+document.addEventListener('click',e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]'),rel=e.target.closest('[data-delrel]');if(edit)editarPersona(edit.dataset.edit);if(del)eliminarPersona(del.dataset.delete);if(rel)eliminarParentesco(rel.dataset.delrel)});
+document.addEventListener('change',e=>{if(e.target.matches('[data-home]'))cambiarVivienda(e.target.dataset.home,e.target.value)});
+$('guardar').onclick=()=>{if(!persistir())return;window.print()};
+$('toggle').onclick=()=>{const oculto=$('panelDibujo').classList.toggle('hidden');$('toggle').textContent=oculto?'Mostrar dibujo':'Ocultar dibujo'};
+$('nuevo').onclick=()=>{if(!confirm('¿Crear un genograma nuevo? Primero guarda el actual como PDF: esta acción reemplaza el guardado local.'))return;datos=nuevoEstado();persistir();limpiarFormulario();$('titulo').value=datos.titulo;$('usuario').value='';$('fecha').value=datos.fecha;$('notas').value='';dibujar()};
+cargar();
 </script>
 </body>
 </html>
-
